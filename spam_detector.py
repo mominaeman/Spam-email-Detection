@@ -509,11 +509,11 @@ def evaluation_result(spam_accuracy, spam_precision, spam_recall, spam_fmeasure,
     output += "##################################################################################\n"
     output += "#                           *** Evaluation Results ***                           #\n"
     output += "#                                                                                #\n"
-    output += "#   Accuracy   | Precision | Recall  | F1-measure                                #\n"
-    output += "# ============ | ========= | ======= | ==========                                #\n"
-    output += f"# Spam Class :  {spam_accuracy:10.2f} |   {spam_precision:8.2f} |  {spam_recall:6.2f} |   {spam_fmeasure:8.2f}                      #\n"
-    output += "# ------------ | --------- | ------- | ----------                                 #\n"
-    output += f"# Ham  Class :  {ham_accuracy:10.2f} |   {ham_precision:8.2f} |  {ham_recall:6.2f} |   {ham_fmeasure:8.2f}                      #\n"
+    output += "#   Accuracy | Precision | Recall  | F1-measure                                  #\n"
+    output += "# ==========|===========|=========|===========                                   #\n"
+    output += f"# Spam Class: {spam_accuracy:8.2f} | {spam_precision:9.2f} | {spam_recall:7.2f} | {spam_fmeasure:9.2f}                        #\n"
+    output += "# ----------|-----------|---------|-----------                                   #\n"
+    output += f"# Ham  Class: {ham_accuracy:8.2f} | {ham_precision:9.2f} | {ham_recall:7.2f} | {ham_fmeasure:9.2f}                        #\n"
     output += "##################################################################################\n"
     return output
 
@@ -543,18 +543,15 @@ def spam_confusionMatrix(tp, tn, fp, fn):
 
 def ham_confusionMatrix(tp, tn, fp, fn):
     output = ""
-
-    output += "             ########################################################### \n"
-    output += "             #          *** Confusion Matrix (Ham Class) ***           # \n"
-    output += "             #                                                         # \n"
-    output += "             #                |    Spam     |     Ham     |            # \n"
-    output += "             #      ==========|=============|=============|======      # \n"
-    output += f"             #        Spam    |  TP = {tp}   |  FN = {fn}     |            # \n"
-    output += "             #      ==========|=============|=============|======      # \n"
-    output += f"             #        Ham     |  FP = {fp}    |  TN = {tn}   |            # \n"
-    output += "             #                |             |             |            # \n"
-    output += "             ########################################################### \n"
-
+    output += "###########################################################\n"
+    output += "#          *** Confusion Matrix (Ham Class) ***           #\n"
+    output += "#                                                         #\n"
+    output += "#            |   Spam   |   Ham    |                      #\n"
+    output += "# ========== | ======== | ======== | ===================  #\n"
+    output += f"#   Spam     |  TP={tp:<3}  |  FN={fn:<3}  |                      #\n"
+    output += "# ---------- | -------- | -------- | -------------------  #\n"
+    output += f"#   Ham      |  FP={fp:<3}  |  TN={tn:<3}  |                      #\n"
+    output += "###########################################################\n"
     return output
 
 
