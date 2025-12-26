@@ -1,0 +1,8 @@
+Subject: Book Club Meeting
+From: alice@bookclub.com
+To: member@bookclub.com
+
+Hi,
+Our next book club meeting is scheduled for Thursday at 7 PM. Hope to see you there!
+Regards,
+Alice

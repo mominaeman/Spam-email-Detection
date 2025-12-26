@@ -1,0 +1,8 @@
+Subject: Your Subscription Renewal
+From: support@newsletter.com
+To: subscriber@domain.com
+
+Hello,
+Your subscription has been renewed for another year. Thank you for staying with us!
+Best,
+Support Team
