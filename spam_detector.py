@@ -4,12 +4,12 @@ import re
 import numpy as np
 
 
-# Setting the path of the train files
-train_path = "./train"
-
-
-# Setting the path of the test files
-test_path = "./test"
+# Setting the path of the train and test files (absolute paths)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+train_path = os.path.join(BASE_DIR, "train")
+ham_train_path = os.path.join(train_path, "ham")
+spam_train_path = os.path.join(train_path, "spam")
+test_path = os.path.join(BASE_DIR, "test")
 
 
 "*** Returns the number of all emails (train files) ***"
@@ -17,31 +17,29 @@ test_path = "./test"
 
 def number_of_allEmails():
     counter = 0
-    for directories, subdirectories, files in os.walk(train_path):
+    for directories, subdirectories, files in os.walk(ham_train_path):
         for filename in files:
             counter += 1
-
+    for directories, subdirectories, files in os.walk(spam_train_path):
+        for filename in files:
+            counter += 1
     return counter
 
 
 "*** Returns the number of spam emails (train files) ***"
 def number_of_spamEmails():
     counter = 0
-    for directories, subdirectories, files in os.walk(train_path):
+    for directories, subdirectories, files in os.walk(spam_train_path):
         for filename in files:
-            if "spam" in filename:
-                counter += 1
-
+            counter += 1
     return counter
 
 "*** Returns the number of ham emails (train files) ***"
 def number_of_hamEmails():
     counter = 0
-    for directories, subdirectories, files in os.walk(train_path):
+    for directories, subdirectories, files in os.walk(ham_train_path):
         for filename in files:
-            if "ham" in filename:
-                counter += 1
-
+            counter += 1
     return counter
 
 
@@ -61,18 +59,25 @@ def trainWord_generator():
     spam_words = []
     ham_words = []
 
-    for directories, subdirectories, files in os.walk(train_path):
+    # Process ham emails
+    for directories, subdirectories, files in os.walk(ham_train_path):
         for filename in files:
             full_path = os.path.join(directories, filename)
             with open(full_path, encoding="latin-1", errors="ignore") as target_file:
                 data = target_file.read()
                 words = text_parser(data)
-                for word in words:
-                    all_words.append(word)
-                    if "ham" in filename:
-                        ham_words.append(word)
-                    elif "spam" in filename:
-                        spam_words.append(word)
+                all_words.extend(words)
+                ham_words.extend(words)
+
+    # Process spam emails
+    for directories, subdirectories, files in os.walk(spam_train_path):
+        for filename in files:
+            full_path = os.path.join(directories, filename)
+            with open(full_path, encoding="latin-1", errors="ignore") as target_file:
+                data = target_file.read()
+                words = text_parser(data)
+                all_words.extend(words)
+                spam_words.extend(words)
 
     all_words = sorted(all_words)
     spam_words = sorted(spam_words)
@@ -251,10 +256,14 @@ def score_calculator(all_uniqueWords, spam_prob, ham_prob, spam_condProb, ham_co
     predicted_label_list = []
     decision_label_list = []
 
-    for directories, subdirectories, files in os.walk(test_path):
-        for filename in files:
+        file_names = []
+        for directories, subdirectories, files in os.walk(test_path):
+            for filename in files:
+                file_names.append(os.path.join(directories, filename))
+
+        for full_path in file_names:
+            filename = os.path.basename(full_path)
             actual_label = "ham" if "ham" in filename else "spam"
-            full_path = os.path.join(directories, filename)
             with open(full_path, encoding="latin-1") as target_file:
                 email_content = target_file.read()
                 email_words = text_parser(email_content)
@@ -274,12 +283,10 @@ def score_calculator(all_uniqueWords, spam_prob, ham_prob, spam_condProb, ham_co
                 ham_score_list.append(ham_score)
 
                 predicted_label = "spam" if spam_score > ham_score else "ham"
-                predicted_label_list += [predicted_label]
+                predicted_label_list.append(predicted_label)
 
                 decision_label = "right" if predicted_label == actual_label else "wrong"
-                decision_label_list += [decision_label]
-
-    return ham_score_list, spam_score_list, predicted_label_list, decision_label_list
+                decision_label_list.append(decision_label)
 
 
 "*** Generates the content of result.txt ***"
@@ -304,45 +311,53 @@ def resultFileBuilder(result_output):
 
 
 def get_spamPrecision(fileNumbers, actualLabels, predictedLabels):
-    tp = 0
-    fp = 0
-    precision = 0
+    actual_label = ""
+    predicted_label = ""
+    decision_label = ""
 
-    for index in range(0, fileNumbers):
-        if(actualLabels[index] == "spam" and actualLabels[index] == predictedLabels[index]):
-            tp += 1
-        if(actualLabels[index] == "ham" and predictedLabels[index] == "spam"):
-            fp += 1
+    ham_score_list = []
+    spam_score_list = []
 
-    precision = (tp / (tp + fp))
-
-    return precision
+    predicted_label_list = []
+    decision_label_list = []
 
 
-"*** Calculates Recall (spam class) - Formula: (True Positive / (True Positive + False Negative)) ***"
+    for directories, subdirectories, files in os.walk(test_path):
+        for filename in files:
+            actual_label = "ham" if "ham" in filename else "spam"
+            full_path = os.path.join(directories, filename)
+            with open(full_path, encoding="latin-1") as target_file:
+                email_content = target_file.read()
+                email_words = text_parser(email_content)
 
+                sigma_spamScore = 0
+                sigma_hamScore = 0
 
-def get_spamRecall(fileNumbers, actualLabels, predictedLabels):
-    tp = 0
-    fn = 0
-    recall = 0
+                for word in email_words:
+                    if word in all_uniqueWords:
+                        sigma_spamScore += np.log(spam_condProb[word])
+                        sigma_hamScore += np.log(ham_condProb[word])
 
-    for index in range(0, fileNumbers):
-        if(actualLabels[index] == "spam" and actualLabels[index] == predictedLabels[index]):
-            tp += 1
-        if(actualLabels[index] == "spam" and predictedLabels[index] == "ham"):
-            fn += 1
+                spam_score = (np.log(spam_prob) + sigma_spamScore)
+                spam_score_list.append(spam_score)
 
-    recall = (tp / (tp + fn))
+                ham_score = (np.log(ham_prob) + sigma_hamScore)
+                ham_score_list.append(ham_score)
 
-    return recall
+                predicted_label = "spam" if spam_score > ham_score else "ham"
+                predicted_label_list.append(predicted_label)
 
+                decision_label = "right" if predicted_label == actual_label else "wrong"
+                decision_label_list.append(decision_label)
 
-"*** Calculates Accuracy (spam class) - Formula: (TP + TN) / (TP + FP + TN + FN) ***"
+            # Debug print for each test file
+            print(f"[DEBUG][score_calculator] File: {filename}, Actual: {actual_label}, Predicted: {predicted_label}")
 
+    print(f"[DEBUG][score_calculator] Total test files processed: {len(predicted_label_list)}")
+    print(f"[DEBUG][score_calculator] First 5 predicted labels: {predicted_label_list[:5]}")
+    print(f"[DEBUG][score_calculator] First 5 decision labels: {decision_label_list[:5]}")
 
-def get_spamAccuracy(fileNumbers, actualLabels, predictedLabels):
-    tp = 0
+    return ham_score_list, spam_score_list, predicted_label_list, decision_label_list
     fp = 0
     tn = 0
     fn = 0
@@ -491,18 +506,15 @@ def hamConfusionParams(fileNumbers, actualLabels, predictedLabels):
 
 def evaluation_result(spam_accuracy, spam_precision, spam_recall, spam_fmeasure, ham_accuracy, ham_precision, ham_recall, ham_fmeasure):
     output = ""
-
-    output += "################################################################################## \n"
-    output += "#                           *** Evaluation Results ***                           # \n"
-    output += "#                                                                                # \n"
-    output += "#                  Accuracy |     Precission    | Recall |     F1-measure        # \n"
-    output += "# ==========================|===================|========|====================== # \n"
-    output += f"#  Spam Class :    {spam_accuracy}   |{spam_precision} | {spam_recall}   | {spam_fmeasure}    # \n"
-    output += "# --------------------------|-------------------|--------|---------------------- # \n"
-    output += f"#  Ham  Class :    {ham_accuracy}   |{ham_precision} | {ham_recall}  | {ham_fmeasure}    # \n"
-    output += "#                           |                   |        |                       # \n"
-    output += "################################################################################## \n"
-
+    output += "##################################################################################\n"
+    output += "#                           *** Evaluation Results ***                           #\n"
+    output += "#                                                                                #\n"
+    output += "#   Accuracy   | Precision | Recall  | F1-measure                                #\n"
+    output += "# ============ | ========= | ======= | ==========                                #\n"
+    output += f"# Spam Class :  {spam_accuracy:10.2f} |   {spam_precision:8.2f} |  {spam_recall:6.2f} |   {spam_fmeasure:8.2f}                      #\n"
+    output += "# ------------ | --------- | ------- | ----------                                 #\n"
+    output += f"# Ham  Class :  {ham_accuracy:10.2f} |   {ham_precision:8.2f} |  {ham_recall:6.2f} |   {ham_fmeasure:8.2f}                      #\n"
+    output += "##################################################################################\n"
     return output
 
 

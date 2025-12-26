@@ -174,4 +174,6 @@ def mainFunction():
 
 
 # Calls the main function to create result.txt as well as evaluate.txt
+print("Starting test script...")
 mainFunction()
+print("Test script finished.")
