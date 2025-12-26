@@ -1,0 +1,5 @@
+Subject: Your account is at risk!
+From: security@bankalert.com
+To: user@domain.com
+
+We detected suspicious activity on your account. Click here to secure your account immediately!
