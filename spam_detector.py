@@ -521,18 +521,41 @@ def hamConfusionParams(fileNumbers, actualLabels, predictedLabels):
 
 
 def evaluation_result(spam_accuracy, spam_precision, spam_recall, spam_fmeasure, ham_accuracy, ham_precision, ham_recall, ham_fmeasure):
-    output = ""
+    # Table column widths
+    LABEL_W = 16
+    COL_W = 10
 
-    output += "################################################################################################## \n"
-    output += "#                           *** Evaluation Results ***                                           # \n"
-    output += "#                                                                                                # \n"
-    output += "#                  Accuracy         |     Precission    | Recall          |     F1-measure       # \n"
-    output += "# ==================================|===================|=================|======================# \n"
-    output += f"#  Spam Class :    {spam_accuracy} |{spam_precision}   | {spam_recall}   | {spam_fmeasure}      # \n"
-    output += "# ----------------------------------|-------------------|-----------------|----------------------# \n"
-    output += f"#  Ham  Class :    {ham_accuracy}  |{ham_precision}    | {ham_recall}    | {ham_fmeasure}       # \n"
-    output += "#                                   |                   |                 |                      # \n"
-    output += "################################################################################################## \n"
+    # build the header/content lines and compute box width dynamically
+    header_cols = f"{'':{LABEL_W}} | { 'Accuracy':^{COL_W}} | { 'Precision':^{COL_W}} | { 'Recall':^{COL_W}} | { 'F1-measure':^{COL_W}}"
+    sep = "-" * len(header_cols)
+
+    def boxed_border(total_width):
+        return "#" * (total_width + 4) + "\n"
+
+    def boxed_line(content, total_width):
+        return "# " + content.ljust(total_width) + " #\n"
+
+    total_width = len(header_cols)
+
+    output = ""
+    output += boxed_border(total_width)
+    output += boxed_line("*** Evaluation Results ***".center(total_width), total_width)
+    output += boxed_line("", total_width)
+    output += boxed_line(header_cols, total_width)
+    output += boxed_line(sep, total_width)
+
+    spam_row = (
+        f"{'Spam Class :':{LABEL_W}} | {spam_accuracy:>{COL_W}.2f} | {spam_precision:>{COL_W}.2f} | {spam_recall:>{COL_W}.2f} | {spam_fmeasure:>{COL_W}.2f}"
+    )
+    ham_row = (
+        f"{'Ham Class :':{LABEL_W}} | {ham_accuracy:>{COL_W}.2f} | {ham_precision:>{COL_W}.2f} | {ham_recall:>{COL_W}.2f} | {ham_fmeasure:>{COL_W}.2f}"
+    )
+
+    output += boxed_line(spam_row, total_width)
+    output += boxed_line(sep, total_width)
+    output += boxed_line(ham_row, total_width)
+    output += boxed_line("", total_width)
+    output += boxed_border(total_width)
 
     return output
 
@@ -542,17 +565,30 @@ def evaluation_result(spam_accuracy, spam_precision, spam_recall, spam_fmeasure,
 
 def spam_confusionMatrix(tp, tn, fp, fn):
     output = ""
+    INDENT = " " * 13
+    CONF_W = 60
 
-    output += "             ############################################################\n"
-    output += "             #          *** Confusion Matrix (Spam Class) ***           # \n"
-    output += "             #                                                          # \n"
-    output += "             #                |    Spam        |     Ham     |          # \n"
-    output += "             #      ==========|================|=============|======    # \n"
-    output += f"            #        Spam    |  TP = {tp}      |  FN = {fn}   |          # \n"
-    output += "             #      ==========|==============================|======    # \n"
-    output += f"            #        Ham     | FP = {fp}       |  TN = {tn}   |          # \n"
-    output += "             #                |                |             |          # \n"
-    output += "             ############################################################ \n"
+    output += INDENT + "#" * CONF_W + "\n"
+    output += INDENT + ("#" + " " * (CONF_W - 2) + "#\n")
+    output += INDENT + "#" + "*** Confusion Matrix (Spam Class) ***".center(CONF_W - 2) + "#\n"
+    output += INDENT + ("#" + " " * (CONF_W - 2) + "#\n")
+    output += INDENT + "#" + "Actual \\ Predicted".center(CONF_W - 2) + "#\n"
+    output += INDENT + "#" + "".center(CONF_W - 2, '=') + "#\n"
+    output += (
+        INDENT
+        + "#"
+        + f"  Spam vs Spam: TP = {tp:>3}  |  Spam vs Ham: FN = {fn:>3}  ".center(CONF_W - 2)
+        + "#\n"
+    )
+    output += INDENT + "#" + "".center(CONF_W - 2, '-') + "#\n"
+    output += (
+        INDENT
+        + "#"
+        + f"  Ham vs Spam: FP = {fp:>3}  |  Ham vs Ham: TN = {tn:>3}  ".center(CONF_W - 2)
+        + "#\n"
+    )
+    output += INDENT + ("#" + " " * (CONF_W - 2) + "#\n")
+    output += INDENT + "#" * CONF_W + "\n"
 
     return output
 
@@ -562,17 +598,30 @@ def spam_confusionMatrix(tp, tn, fp, fn):
 
 def ham_confusionMatrix(tp, tn, fp, fn):
     output = ""
+    INDENT = " " * 13
+    CONF_W = 60
 
-    output += "             ########################################################### \n"
-    output += "             #          *** Confusion Matrix (Ham Class) ***           # \n"
-    output += "             #                                                         # \n"
-    output += "             #                |    Spam     |     Ham         |            # \n"
-    output += "             #      ==========|=============|=================|======      # \n"
-    output += f"            #        Spam    |  TP = {tp}  |  FN = {fn}     |       # \n"
-    output += "             #      ==========|=============|=================|======      # \n"
-    output += f"            #        Ham     |  FP = {fp}  |  TN = {tn}    |        # \n"
-    output += "             #                |             |                 |        # \n"
-    output += "             ########################################################### \n"
+    output += INDENT + "#" * CONF_W + "\n"
+    output += INDENT + ("#" + " " * (CONF_W - 2) + "#\n")
+    output += INDENT + "#" + "*** Confusion Matrix (Ham Class) ***".center(CONF_W - 2) + "#\n"
+    output += INDENT + ("#" + " " * (CONF_W - 2) + "#\n")
+    output += INDENT + "#" + "Actual \\ Predicted".center(CONF_W - 2) + "#\n"
+    output += INDENT + "#" + "".center(CONF_W - 2, '=') + "#\n"
+    output += (
+        INDENT
+        + "#"
+        + f"  Spam vs Spam: TP = {tp:>3}  |  Spam vs Ham: FN = {fn:>3}  ".center(CONF_W - 2)
+        + "#\n"
+    )
+    output += INDENT + "#" + "".center(CONF_W - 2, '-') + "#\n"
+    output += (
+        INDENT
+        + "#"
+        + f"  Ham vs Spam: FP = {fp:>3}  |  Ham vs Ham: TN = {tn:>3}  ".center(CONF_W - 2)
+        + "#\n"
+    )
+    output += INDENT + ("#" + " " * (CONF_W - 2) + "#\n")
+    output += INDENT + "#" * CONF_W + "\n"
 
     return output
 
