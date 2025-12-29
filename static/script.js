@@ -39,7 +39,31 @@ Project Manager`
 document.addEventListener('DOMContentLoaded', () => {
     loadEvaluationMetrics();
     setupEventListeners();
+    setupTabs();
 });
+
+function setupTabs() {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const performanceSections = document.querySelectorAll('.model-performance');
+    
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Remove active class from all buttons and sections
+            tabBtns.forEach(b => b.classList.remove('active'));
+            performanceSections.forEach(s => s.classList.remove('active'));
+            
+            // Add active class to clicked button
+            btn.classList.add('active');
+            
+            // Show corresponding section
+            const modelId = btn.dataset.model;
+            const section = document.getElementById(`${modelId}-performance`);
+            if (section) {
+                section.classList.add('active');
+            }
+        });
+    });
+}
 
 function setupEventListeners() {
     const detectBtn = document.getElementById('detectBtn');
@@ -111,34 +135,66 @@ async function detectSpam() {
 
 function displayResults(data) {
     const results = document.getElementById('results');
-    const resultBadge = document.getElementById('resultBadge');
-    const resultText = document.getElementById('resultText');
-    const spamScore = document.getElementById('spamScore');
-    const hamScore = document.getElementById('hamScore');
-    const confidence = document.getElementById('confidence');
-    const progressFill = document.getElementById('progressFill');
-
-    // Set badge and text
-    resultBadge.className = `badge ${data.prediction}`;
-    resultBadge.textContent = data.prediction.toUpperCase();
     
-    const emoji = data.is_spam ? '⚠️' : '✅';
-    const message = data.is_spam ? 'This looks like SPAM!' : 'This looks like a legitimate email';
-    resultText.textContent = `${emoji} ${message}`;
-
-    // Set scores
-    spamScore.textContent = data.spam_score.toFixed(2);
-    hamScore.textContent = data.ham_score.toFixed(2);
-    confidence.textContent = data.confidence.toFixed(2);
-
-    // Calculate progress percentage (0-100, where spam is 0 and ham is 100)
-    const total = Math.abs(data.spam_score) + Math.abs(data.ham_score);
-    const hamPercentage = (Math.abs(data.ham_score) / total) * 100;
-    progressFill.style.width = `${hamPercentage}%`;
-
+    // Consensus section
+    const consensusBadge = document.getElementById('consensusBadge');
+    const consensusText = document.getElementById('consensusText');
+    const consensusAgreement = document.getElementById('consensusAgreement');
+    
+    consensusBadge.className = `consensus-badge ${data.consensus.prediction}`;
+    consensusBadge.textContent = data.consensus.prediction.toUpperCase();
+    
+    const emoji = data.consensus.prediction === 'spam' ? '⚠️' : '✅';
+    const message = data.consensus.prediction === 'spam' ? 
+        'Models Consensus: This is SPAM' : 
+        'Models Consensus: This is LEGITIMATE';
+    consensusText.textContent = `${emoji} ${message}`;
+    
+    const unanimousText = data.consensus.unanimous ? ' (Unanimous)' : '';
+    consensusAgreement.textContent = `${data.consensus.agreement} models agree${unanimousText}`;
+    
+    // Model 1
+    displayModelResult('1', data.model1);
+    
+    // Model 2
+    displayModelResult('2', data.model2);
+    if (data.model2.detected_features && data.model2.detected_features.length > 0) {
+        const features2 = document.getElementById('features2');
+        const featuresList = document.getElementById('featuresList');
+        featuresList.innerHTML = data.model2.detected_features
+            .map(f => `<span class="feature-tag">${f}</span>`)
+            .join('');
+        features2.style.display = 'block';
+    }
+    
+    // Model 3
+    displayModelResult('3', data.model3);
+    if (data.model3.top_tfidf_words && data.model3.top_tfidf_words.length > 0) {
+        const tfidf3 = document.getElementById('tfidf3');
+        const wordsList = document.getElementById('wordsList');
+        wordsList.innerHTML = data.model3.top_tfidf_words
+            .map(w => `<span class="word-tag">${w}</span>`)
+            .join('');
+        tfidf3.style.display = 'block';
+    }
+    
     // Show results
     results.style.display = 'block';
     results.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function displayModelResult(num, modelData) {
+    const resultDiv = document.getElementById(`result${num}`);
+    const spamDiv = document.getElementById(`spam${num}`);
+    const hamDiv = document.getElementById(`ham${num}`);
+    const confDiv = document.getElementById(`conf${num}`);
+    
+    resultDiv.className = `model-result ${modelData.prediction}`;
+    resultDiv.textContent = modelData.prediction.toUpperCase();
+    
+    spamDiv.textContent = modelData.spam_score.toFixed(3);
+    hamDiv.textContent = modelData.ham_score.toFixed(3);
+    confDiv.textContent = modelData.confidence.toFixed(3);
 }
 
 function showError(message) {
@@ -153,15 +209,48 @@ async function loadEvaluationMetrics() {
         const data = await response.json();
         
         displayDatasetInfo(data.dataset_info);
-        displayMetrics(data);
-        createROCChart(data.roc_curve);
-        createConfusionMatrix(data.spam_metrics.confusion_matrix);
-        createMetricsComparison(data);
+        
+        // Display metrics and charts for each model
+        displayModelMetrics('1', data.model1);
+        displayModelMetrics('2', data.model2);
+        displayModelMetrics('3', data.model3);
+        
+        // Create comparison charts
+        createComparisonCharts(data);
         createDistributionChart(data.dataset_info);
         
     } catch (err) {
         console.error('Failed to load evaluation metrics:', err);
     }
+}
+
+function displayModelMetrics(num, modelData) {
+    // Display metrics summary
+    const metricsContainer = document.getElementById(`metrics${num}`);
+    metricsContainer.innerHTML = `
+        <div class="metric-item accuracy">
+            <span class="label">Accuracy</span>
+            <span class="value">${(modelData.accuracy * 100).toFixed(2)}%</span>
+        </div>
+        <div class="metric-item precision">
+            <span class="label">Precision</span>
+            <span class="value">${(modelData.precision * 100).toFixed(2)}%</span>
+        </div>
+        <div class="metric-item recall">
+            <span class="label">Recall</span>
+            <span class="value">${(modelData.recall * 100).toFixed(2)}%</span>
+        </div>
+        <div class="metric-item f1">
+            <span class="label">F1-Score</span>
+            <span class="value">${(modelData.f1_score * 100).toFixed(2)}%</span>
+        </div>
+    `;
+    
+    // Create ROC curve
+    createROCChart(`rocChart${num}`, modelData.roc_curve, modelData.name);
+    
+    // Create confusion matrix
+    createConfusionMatrix(`confusionChart${num}`, modelData.confusion_matrix, modelData.name);
 }
 
 function displayDatasetInfo(info) {
@@ -217,15 +306,15 @@ function displayMetricCard(elementId, metrics) {
     `;
 }
 
-function createROCChart(rocData) {
-    const ctx = document.getElementById('rocChart');
+function createROCChart(canvasId, rocData, modelName) {
+    const ctx = document.getElementById(canvasId);
     
     new Chart(ctx, {
         type: 'line',
         data: {
             labels: rocData.fpr.map((_, i) => i),
             datasets: [{
-                label: `ROC Curve (AUC = ${rocData.auc.toFixed(3)})`,
+                label: `${modelName} (AUC = ${rocData.auc.toFixed(3)})`,
                 data: rocData.fpr.map((fpr, i) => ({ x: fpr, y: rocData.tpr[i] })),
                 borderColor: '#6366f1',
                 backgroundColor: 'rgba(99, 102, 241, 0.1)',
@@ -274,13 +363,13 @@ function createROCChart(rocData) {
     });
 }
 
-function createConfusionMatrix(cm) {
-    const ctx = document.getElementById('confusionChart');
+function createConfusionMatrix(canvasId, cm, modelName) {
+    const ctx = document.getElementById(canvasId);
     
     new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['True Positive', 'True Negative', 'False Positive', 'False Negative'],
+            labels: ['True Positives', 'True Negatives', 'False Positives', 'False Negatives'],
             datasets: [{
                 label: 'Count',
                 data: [cm.tp, cm.tn, cm.fp, cm.fn],
@@ -289,17 +378,13 @@ function createConfusionMatrix(cm) {
                     '#3b82f6',
                     '#f59e0b',
                     '#ef4444'
-                ]
+                ],
+                borderWidth: 0
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: true,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
             scales: {
                 y: {
                     beginAtZero: true,
@@ -308,58 +393,179 @@ function createConfusionMatrix(cm) {
                         text: 'Number of Emails'
                     }
                 }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: modelName
+                }
             }
         }
     });
 }
 
-function createMetricsComparison(data) {
-    const ctx = document.getElementById('metricsChart');
-    
-    new Chart(ctx, {
-        type: 'radar',
+function createComparisonCharts(data) {
+    // ROC Comparison
+    const rocCtx = document.getElementById('rocComparison');
+    new Chart(rocCtx, {
+        type: 'line',
         data: {
-            labels: ['Accuracy', 'Precision', 'Recall', 'F1 Score'],
+            datasets: [
+                {
+                    label: `Model 1 (AUC=${data.model1.roc_curve.auc.toFixed(3)})`,
+                    data: data.model1.roc_curve.fpr.map((fpr, i) => ({ 
+                        x: fpr, 
+                        y: data.model1.roc_curve.tpr[i] 
+                    })),
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderWidth: 3,
+                    pointRadius: 0,
+                    tension: 0.1
+                },
+                {
+                    label: `Model 2 (AUC=${data.model2.roc_curve.auc.toFixed(3)})`,
+                    data: data.model2.roc_curve.fpr.map((fpr, i) => ({ 
+                        x: fpr, 
+                        y: data.model2.roc_curve.tpr[i] 
+                    })),
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderWidth: 3,
+                    pointRadius: 0,
+                    tension: 0.1
+                },
+                {
+                    label: `Model 3 (AUC=${data.model3.roc_curve.auc.toFixed(3)})`,
+                    data: data.model3.roc_curve.fpr.map((fpr, i) => ({ 
+                        x: fpr, 
+                        y: data.model3.roc_curve.tpr[i] 
+                    })),
+                    borderColor: '#8b5cf6',
+                    backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                    borderWidth: 3,
+                    pointRadius: 0,
+                    tension: 0.1
+                },
+                {
+                    label: 'Random',
+                    data: [{ x: 0, y: 0 }, { x: 1, y: 1 }],
+                    borderColor: '#94a3b8',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    pointRadius: 0
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+                x: {
+                    type: 'linear',
+                    title: { display: true, text: 'False Positive Rate' },
+                    min: 0,
+                    max: 1
+                },
+                y: {
+                    title: { display: true, text: 'True Positive Rate' },
+                    min: 0,
+                    max: 1
+                }
+            },
+            plugins: {
+                legend: { display: true, position: 'bottom' }
+            }
+        }
+    });
+    
+    // Metrics Comparison
+    const metricsCtx = document.getElementById('metricsComparison');
+    new Chart(metricsCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Accuracy', 'Precision', 'Recall', 'F1-Score'],
+            datasets: [
+                {
+                    label: 'Model 1',
+                    data: [
+                        data.model1.accuracy * 100,
+                        data.model1.precision * 100,
+                        data.model1.recall * 100,
+                        data.model1.f1_score * 100
+                    ],
+                    backgroundColor: '#3b82f6'
+                },
+                {
+                    label: 'Model 2',
+                    data: [
+                        data.model2.accuracy * 100,
+                        data.model2.precision * 100,
+                        data.model2.recall * 100,
+                        data.model2.f1_score * 100
+                    ],
+                    backgroundColor: '#10b981'
+                },
+                {
+                    label: 'Model 3',
+                    data: [
+                        data.model3.accuracy * 100,
+                        data.model3.precision * 100,
+                        data.model3.recall * 100,
+                        data.model3.f1_score * 100
+                    ],
+                    backgroundColor: '#8b5cf6'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    title: { display: true, text: 'Percentage (%)' }
+                }
+            },
+            plugins: {
+                legend: { display: true, position: 'bottom' }
+            }
+        }
+    });
+    
+    // Accuracy Comparison
+    const accCtx = document.getElementById('accuracyChart');
+    new Chart(accCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Model 1: Naive Bayes', 'Model 2: Enhanced', 'Model 3: TF-IDF'],
             datasets: [{
-                label: 'Spam Detection',
+                label: 'Accuracy (%)',
                 data: [
-                    data.spam_metrics.accuracy * 100,
-                    data.spam_metrics.precision * 100,
-                    data.spam_metrics.recall * 100,
-                    data.spam_metrics.f1_score * 100
+                    data.model1.accuracy * 100,
+                    data.model2.accuracy * 100,
+                    data.model3.accuracy * 100
                 ],
-                borderColor: '#ef4444',
-                backgroundColor: 'rgba(239, 68, 68, 0.2)',
-                borderWidth: 2
-            }, {
-                label: 'Ham Detection',
-                data: [
-                    data.ham_metrics.accuracy * 100,
-                    data.ham_metrics.precision * 100,
-                    data.ham_metrics.recall * 100,
-                    data.ham_metrics.f1_score * 100
-                ],
-                borderColor: '#10b981',
-                backgroundColor: 'rgba(16, 185, 129, 0.2)',
-                borderWidth: 2
+                backgroundColor: ['#3b82f6', '#10b981', '#8b5cf6'],
+                borderWidth: 0
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: true,
             scales: {
-                r: {
+                y: {
                     beginAtZero: true,
                     max: 100,
-                    ticks: {
-                        stepSize: 20
-                    }
+                    title: { display: true, text: 'Accuracy (%)' }
                 }
             },
             plugins: {
-                legend: {
-                    position: 'bottom'
-                }
+                legend: { display: false }
             }
         }
     });
@@ -387,6 +593,10 @@ function createDistributionChart(info) {
             plugins: {
                 legend: {
                     position: 'bottom'
+                },
+                title: {
+                    display: true,
+                    text: 'Training Data Distribution'
                 }
             }
         }

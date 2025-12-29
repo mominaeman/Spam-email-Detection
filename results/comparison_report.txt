@@ -1,0 +1,270 @@
+================================================================================
+ SPAM DETECTION MODELS - DETAILED COMPARISON REPORT
+================================================================================
+
+Model 1 (Naive Bayes)
+────────────────────────────────────────────────────────────────────────────────
+  Accuracy:  0.9375 (93.75%)
+  Precision: 0.8571 (85.71%)
+  Recall:    1.0000 (100.00%)
+  F1-Score:  0.9231 (92.31%)
+  TP=54, TN=81, FP=9, FN=0
+
+Model 2 (Enhanced Features)
+────────────────────────────────────────────────────────────────────────────────
+  Accuracy:  0.8958 (89.58%)
+  Precision: 0.8197 (81.97%)
+  Recall:    0.9259 (92.59%)
+  F1-Score:  0.8696 (86.96%)
+  TP=50, TN=79, FP=11, FN=4
+
+Model 3 (TF-IDF + Ensemble)
+────────────────────────────────────────────────────────────────────────────────
+  Accuracy:  0.6319 (63.19%)
+  Precision: 0.5047 (50.47%)
+  Recall:    1.0000 (100.00%)
+  F1-Score:  0.6708 (67.08%)
+  TP=54, TN=37, FP=53, FN=0
+
+
+================================================================================
+ DETAILED PREDICTIONS
+================================================================================
+
+Filename                            True     Model1   Model2   Model3  
+────────────────────────────────────────────────────────────────────────────────
+test-ham-00001.txt                  ham      ham      ham      spam    
+test-ham-00002.txt                  ham      ham      ham      ham     
+test-ham-00003.txt                  ham      ham      ham      spam    
+test-ham-00004.txt                  ham      ham      ham      spam    
+test-ham-00005.txt                  ham      ham      ham      spam    
+test-ham-00006.txt                  ham      ham      ham      ham     
+test-ham-00007.txt                  ham      ham      ham      ham     
+test-ham-00008.txt                  ham      ham      ham      ham     
+test-ham-00009.txt                  ham      ham      ham      spam    
+test-ham-00010.txt                  ham      ham      ham      spam    
+test-ham-00011.txt                  ham      ham      ham      ham     
+test-ham-00012.txt                  ham      ham      ham      ham     
+test-ham-00013.txt                  ham      ham      ham      ham     
+test-ham-00014.txt                  ham      ham      ham      ham     
+test-ham-00015.txt                  ham      ham      ham      ham     
+test-ham-00016.txt                  ham      ham      ham      ham     
+test-ham-00017.txt                  ham      ham      ham      ham     
+test-ham-00018.txt                  ham      ham      ham      ham     
+test-ham-00019.txt                  ham      ham      ham      spam    
+test-ham-00020.txt                  ham      ham      ham      ham     
+test-ham-00021.txt                  ham      ham      ham      ham     
+test-ham-00022.txt                  ham      ham      ham      ham     
+test-ham-00023.txt                  ham      ham      ham      spam    
+test-ham-00024.txt                  ham      ham      ham      ham     
+test-ham-00025.txt                  ham      ham      ham      spam    
+test-ham-00026.txt                  ham      ham      spam     spam    
+test-ham-00027.txt                  ham      ham      spam     ham     
+test-ham-00028.txt                  ham      ham      ham      ham     
+test-ham-00029.txt                  ham      ham      ham      spam    
+test-ham-00030.txt                  ham      ham      ham      ham     
+test-ham-00031.txt                  ham      ham      ham      ham     
+test-ham-00032.txt                  ham      ham      ham      ham     
+test-ham-00033.txt                  ham      ham      ham      ham     
+test-ham-00034.txt                  ham      ham      spam     ham     
+test-ham-00035.txt                  ham      ham      ham      ham     
+test-ham-00036.txt                  ham      ham      ham      ham     
+test-ham-00037.txt                  ham      ham      ham      ham     
+test-ham-00038.txt                  ham      ham      ham      ham     
+test-ham-00039.txt                  ham      ham      ham      ham     
+test-ham-00040.txt                  ham      ham      ham      ham     
+test-ham-00041.txt                  ham      ham      ham      ham     
+test-ham-00042.txt                  ham      ham      ham      ham     
+test-ham-00043.txt                  ham      ham      ham      ham     
+test-ham-00044.txt                  ham      ham      ham      ham     
+test-ham-00045.txt                  ham      ham      ham      ham     
+test-ham-00046.txt                  ham      ham      spam     ham     
+test-ham-00047.txt                  ham      ham      ham      spam    
+test-ham-00048.txt                  ham      ham      ham      spam    
+test-ham-00049.txt                  ham      ham      ham      spam    
+test-ham-00050.txt                  ham      ham      spam     spam    
+test-ham-00051.txt                  ham      ham      ham      spam    
+test-ham-00052.txt                  ham      ham      ham      spam    
+test-ham-00053.txt                  ham      ham      ham      spam    
+test-ham-00054.txt                  ham      ham      ham      spam    
+test-ham-00055.txt                  ham      ham      ham      spam    
+test-ham-00056.txt                  ham      ham      ham      ham     
+test-ham-00057.txt                  ham      ham      ham      spam    
+test-ham-00058.txt                  ham      ham      spam     spam    
+test-ham-00059.txt                  ham      ham      ham      spam    
+test-ham-00060.txt                  ham      ham      spam     spam    
+test-ham-00061.txt                  ham      ham      ham      spam    
+test-ham-00062.txt                  ham      ham      ham      spam    
+test-ham-00063.txt                  ham      ham      ham      spam    
+test-ham-00064.txt                  ham      ham      ham      spam    
+test-ham-00065.txt                  ham      ham      ham      ham     
+test-ham-00066.txt                  ham      ham      ham      spam    
+test-ham-00067.txt                  ham      ham      ham      spam    
+test-ham-00068.txt                  ham      ham      ham      spam    
+test-ham-00069.txt                  ham      ham      ham      spam    
+test-ham-00070.txt                  ham      ham      ham      spam    
+test-ham-00071.txt                  ham      ham      ham      spam    
+test-ham-00072.txt                  ham      ham      ham      spam    
+test-ham-00073.txt                  ham      ham      ham      spam    
+test-ham-00074.txt                  ham      ham      spam     spam    
+test-ham-00075.txt                  ham      spam     ham      spam    
+test-ham-00076.txt                  ham      ham      ham      spam    
+test-ham-00077.txt                  ham      ham      ham      spam    
+test-ham-00078.txt                  ham      ham      ham      spam    
+test-ham-00079.txt                  ham      spam     ham      spam    
+test-ham-00080.txt                  ham      spam     spam     spam    
+test-ham-00081.txt                  ham      spam     spam     spam    
+test-ham-00082.txt                  ham      spam     spam     spam    
+test-ham-00083.txt                  ham      spam     ham      spam    
+test-ham-00084.txt                  ham      ham      ham      spam    
+test-ham-00085.txt                  ham      spam     ham      spam    
+test-ham-00086.txt                  ham      ham      ham      spam    
+test-ham-00087.txt                  ham      ham      ham      spam    
+test-ham-00088.txt                  ham      spam     ham      spam    
+test-ham-00089.txt                  ham      spam     ham      spam    
+test-ham-00090.txt                  ham      ham      ham      spam    
+test-spam-00001.txt                 spam     spam     spam     spam    
+test-spam-00002.txt                 spam     spam     spam     spam    
+test-spam-00003.txt                 spam     spam     spam     spam    
+test-spam-00004.txt                 spam     spam     spam     spam    
+test-spam-00005.txt                 spam     spam     spam     spam    
+test-spam-00006.txt                 spam     spam     spam     spam    
+test-spam-00007.txt                 spam     spam     spam     spam    
+test-spam-00008.txt                 spam     spam     spam     spam    
+test-spam-00009.txt                 spam     spam     spam     spam    
+test-spam-00010.txt                 spam     spam     spam     spam    
+test-spam-00011.txt                 spam     spam     spam     spam    
+test-spam-00012.txt                 spam     spam     spam     spam    
+test-spam-00013.txt                 spam     spam     spam     spam    
+test-spam-00014.txt                 spam     spam     spam     spam    
+test-spam-00015.txt                 spam     spam     ham      spam    
+test-spam-00016.txt                 spam     spam     spam     spam    
+test-spam-00017.txt                 spam     spam     spam     spam    
+test-spam-00018.txt                 spam     spam     spam     spam    
+test-spam-00019.txt                 spam     spam     spam     spam    
+test-spam-00020.txt                 spam     spam     spam     spam    
+test-spam-00021.txt                 spam     spam     ham      spam    
+test-spam-00022.txt                 spam     spam     ham      spam    
+test-spam-00023.txt                 spam     spam     spam     spam    
+test-spam-00024.txt                 spam     spam     spam     spam    
+test-spam-00025.txt                 spam     spam     spam     spam    
+test-spam-00026.txt                 spam     spam     spam     spam    
+test-spam-00027.txt                 spam     spam     ham      spam    
+test-spam-00028.txt                 spam     spam     spam     spam    
+test-spam-00029.txt                 spam     spam     spam     spam    
+test-spam-00030.txt                 spam     spam     spam     spam    
+test-spam-00031.txt                 spam     spam     spam     spam    
+test-spam-00032.txt                 spam     spam     spam     spam    
+test-spam-00033.txt                 spam     spam     spam     spam    
+test-spam-00034.txt                 spam     spam     spam     spam    
+test-spam-00035.txt                 spam     spam     spam     spam    
+test-spam-00036.txt                 spam     spam     spam     spam    
+test-spam-00037.txt                 spam     spam     spam     spam    
+test-spam-00038.txt                 spam     spam     spam     spam    
+test-spam-00039.txt                 spam     spam     spam     spam    
+test-spam-00040.txt                 spam     spam     spam     spam    
+test-spam-00041.txt                 spam     spam     spam     spam    
+test-spam-00042.txt                 spam     spam     spam     spam    
+test-spam-00043.txt                 spam     spam     spam     spam    
+test-spam-00044.txt                 spam     spam     spam     spam    
+test-spam-00045.txt                 spam     spam     spam     spam    
+test-spam-00046.txt                 spam     spam     spam     spam    
+test-spam-00047.txt                 spam     spam     spam     spam    
+test-spam-00048.txt                 spam     spam     spam     spam    
+test-spam-00049.txt                 spam     spam     spam     spam    
+test-spam-00050.txt                 spam     spam     spam     spam    
+test-spam-00051.txt                 spam     spam     spam     spam    
+test-spam-00052.txt                 spam     spam     spam     spam    
+test-spam-00053.txt                 spam     spam     spam     spam    
+test-spam-00054.txt                 spam     spam     spam     spam    
+
+================================================================================
+ MISCLASSIFICATIONS BY MODEL
+================================================================================
+
+
+Model 1 (Naive Bayes):
+────────────────────────────────────────────────────────────────────────────────
+  test-ham-00075.txt: actual=ham, predicted=spam
+  test-ham-00079.txt: actual=ham, predicted=spam
+  test-ham-00080.txt: actual=ham, predicted=spam
+  test-ham-00081.txt: actual=ham, predicted=spam
+  test-ham-00082.txt: actual=ham, predicted=spam
+  test-ham-00083.txt: actual=ham, predicted=spam
+  test-ham-00085.txt: actual=ham, predicted=spam
+  test-ham-00088.txt: actual=ham, predicted=spam
+  test-ham-00089.txt: actual=ham, predicted=spam
+
+Model 2 (Enhanced Features):
+────────────────────────────────────────────────────────────────────────────────
+  test-ham-00026.txt: actual=ham, predicted=spam
+  test-ham-00027.txt: actual=ham, predicted=spam
+  test-ham-00034.txt: actual=ham, predicted=spam
+  test-ham-00046.txt: actual=ham, predicted=spam
+  test-ham-00050.txt: actual=ham, predicted=spam
+  test-ham-00058.txt: actual=ham, predicted=spam
+  test-ham-00060.txt: actual=ham, predicted=spam
+  test-ham-00074.txt: actual=ham, predicted=spam
+  test-ham-00080.txt: actual=ham, predicted=spam
+  test-ham-00081.txt: actual=ham, predicted=spam
+  test-ham-00082.txt: actual=ham, predicted=spam
+  test-spam-00015.txt: actual=spam, predicted=ham
+  test-spam-00021.txt: actual=spam, predicted=ham
+  test-spam-00022.txt: actual=spam, predicted=ham
+  test-spam-00027.txt: actual=spam, predicted=ham
+
+Model 3 (TF-IDF + Ensemble):
+────────────────────────────────────────────────────────────────────────────────
+  test-ham-00001.txt: actual=ham, predicted=spam
+  test-ham-00003.txt: actual=ham, predicted=spam
+  test-ham-00004.txt: actual=ham, predicted=spam
+  test-ham-00005.txt: actual=ham, predicted=spam
+  test-ham-00009.txt: actual=ham, predicted=spam
+  test-ham-00010.txt: actual=ham, predicted=spam
+  test-ham-00019.txt: actual=ham, predicted=spam
+  test-ham-00023.txt: actual=ham, predicted=spam
+  test-ham-00025.txt: actual=ham, predicted=spam
+  test-ham-00026.txt: actual=ham, predicted=spam
+  test-ham-00029.txt: actual=ham, predicted=spam
+  test-ham-00047.txt: actual=ham, predicted=spam
+  test-ham-00048.txt: actual=ham, predicted=spam
+  test-ham-00049.txt: actual=ham, predicted=spam
+  test-ham-00050.txt: actual=ham, predicted=spam
+  test-ham-00051.txt: actual=ham, predicted=spam
+  test-ham-00052.txt: actual=ham, predicted=spam
+  test-ham-00053.txt: actual=ham, predicted=spam
+  test-ham-00054.txt: actual=ham, predicted=spam
+  test-ham-00055.txt: actual=ham, predicted=spam
+  test-ham-00057.txt: actual=ham, predicted=spam
+  test-ham-00058.txt: actual=ham, predicted=spam
+  test-ham-00059.txt: actual=ham, predicted=spam
+  test-ham-00060.txt: actual=ham, predicted=spam
+  test-ham-00061.txt: actual=ham, predicted=spam
+  test-ham-00062.txt: actual=ham, predicted=spam
+  test-ham-00063.txt: actual=ham, predicted=spam
+  test-ham-00064.txt: actual=ham, predicted=spam
+  test-ham-00066.txt: actual=ham, predicted=spam
+  test-ham-00067.txt: actual=ham, predicted=spam
+  test-ham-00068.txt: actual=ham, predicted=spam
+  test-ham-00069.txt: actual=ham, predicted=spam
+  test-ham-00070.txt: actual=ham, predicted=spam
+  test-ham-00071.txt: actual=ham, predicted=spam
+  test-ham-00072.txt: actual=ham, predicted=spam
+  test-ham-00073.txt: actual=ham, predicted=spam
+  test-ham-00074.txt: actual=ham, predicted=spam
+  test-ham-00075.txt: actual=ham, predicted=spam
+  test-ham-00076.txt: actual=ham, predicted=spam
+  test-ham-00077.txt: actual=ham, predicted=spam
+  test-ham-00078.txt: actual=ham, predicted=spam
+  test-ham-00079.txt: actual=ham, predicted=spam
+  test-ham-00080.txt: actual=ham, predicted=spam
+  test-ham-00081.txt: actual=ham, predicted=spam
+  test-ham-00082.txt: actual=ham, predicted=spam
+  test-ham-00083.txt: actual=ham, predicted=spam
+  test-ham-00084.txt: actual=ham, predicted=spam
+  test-ham-00085.txt: actual=ham, predicted=spam
+  test-ham-00086.txt: actual=ham, predicted=spam
+  test-ham-00087.txt: actual=ham, predicted=spam
+  test-ham-00088.txt: actual=ham, predicted=spam
+  test-ham-00089.txt: actual=ham, predicted=spam
+  test-ham-00090.txt: actual=ham, predicted=spam

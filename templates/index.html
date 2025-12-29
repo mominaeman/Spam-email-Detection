@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spam Email Detector - Naive Bayes Classifier</title>
+    <title>Spam Email Detector - Progressive ML Models</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
@@ -14,7 +14,7 @@
         <header class="header">
             <div class="header-content">
                 <h1>📧 Spam Email Detector</h1>
-                <p class="subtitle">Powered by Naive Bayes Classification</p>
+                <p class="subtitle">Progressive ML Architecture: 3 Models Comparison</p>
             </div>
         </header>
 
@@ -33,39 +33,123 @@
                 </div>
                 
                 <button id="detectBtn" class="btn btn-primary">
-                    <span class="btn-text">Detect Spam</span>
+                    <span class="btn-text">Detect Spam (All 3 Models)</span>
                     <span class="btn-loader" style="display: none;">Analyzing...</span>
                 </button>
 
-                <!-- Results -->
+                <!-- Results Grid (3 columns) -->
                 <div id="results" class="results" style="display: none;">
-                    <div class="result-header">
-                        <div id="resultBadge" class="badge"></div>
-                        <h3 id="resultText"></h3>
-                    </div>
-                    
-                    <div class="scores-grid">
-                        <div class="score-card">
-                            <div class="score-label">Spam Score</div>
-                            <div id="spamScore" class="score-value"></div>
-                        </div>
-                        <div class="score-card">
-                            <div class="score-label">Ham Score</div>
-                            <div id="hamScore" class="score-value"></div>
-                        </div>
-                        <div class="score-card">
-                            <div class="score-label">Confidence</div>
-                            <div id="confidence" class="score-value"></div>
-                        </div>
+                    <!-- Consensus Section -->
+                    <div class="consensus-section">
+                        <div class="consensus-badge" id="consensusBadge"></div>
+                        <h3 id="consensusText"></h3>
+                        <p id="consensusAgreement" class="consensus-agreement"></p>
                     </div>
 
-                    <div class="progress-container">
-                        <div class="progress-label">
-                            <span>Spam</span>
-                            <span>Ham</span>
+                    <!-- 3-Model Comparison Grid -->
+                    <div class="models-grid">
+                        <!-- Model 1 -->
+                        <div class="model-card model1">
+                            <div class="model-header">
+                                <span class="model-number">Model 1</span>
+                                <h4>Naive Bayes</h4>
+                                <span class="model-badge baseline">Baseline</span>
+                            </div>
+                            <div class="model-result" id="result1"></div>
+                            <div class="scores-grid">
+                                <div class="score-item">
+                                    <span class="score-label">Spam</span>
+                                    <span class="score-value" id="spam1"></span>
+                                </div>
+                                <div class="score-item">
+                                    <span class="score-label">Ham</span>
+                                    <span class="score-value" id="ham1"></span>
+                                </div>
+                                <div class="score-item">
+                                    <span class="score-label">Confidence</span>
+                                    <span class="score-value" id="conf1"></span>
+                                </div>
+                            </div>
+                            <div class="model-tech">
+                                <strong>Techniques:</strong>
+                                <ul>
+                                    <li>Bag of Words</li>
+                                    <li>Laplace Smoothing</li>
+                                    <li>Stop Words Filtering</li>
+                                </ul>
+                            </div>
                         </div>
-                        <div class="progress-bar">
-                            <div id="progressFill" class="progress-fill"></div>
+
+                        <!-- Model 2 -->
+                        <div class="model-card model2">
+                            <div class="model-header">
+                                <span class="model-number">Model 2</span>
+                                <h4>Enhanced Features</h4>
+                                <span class="model-badge enhanced">Enhanced</span>
+                            </div>
+                            <div class="model-result" id="result2"></div>
+                            <div class="scores-grid">
+                                <div class="score-item">
+                                    <span class="score-label">Spam</span>
+                                    <span class="score-value" id="spam2"></span>
+                                </div>
+                                <div class="score-item">
+                                    <span class="score-label">Ham</span>
+                                    <span class="score-value" id="ham2"></span>
+                                </div>
+                                <div class="score-item">
+                                    <span class="score-label">Confidence</span>
+                                    <span class="score-value" id="conf2"></span>
+                                </div>
+                            </div>
+                            <div class="model-tech">
+                                <strong>Techniques:</strong>
+                                <ul>
+                                    <li>18 Statistical Features</li>
+                                    <li>SVM with Grid Search</li>
+                                    <li>Feature Scaling</li>
+                                </ul>
+                            </div>
+                            <div class="detected-features" id="features2" style="display: none;">
+                                <strong>Detected Features:</strong>
+                                <div class="features-list" id="featuresList"></div>
+                            </div>
+                        </div>
+
+                        <!-- Model 3 -->
+                        <div class="model-card model3">
+                            <div class="model-header">
+                                <span class="model-number">Model 3</span>
+                                <h4>TF-IDF + Ensemble</h4>
+                                <span class="model-badge advanced">Advanced</span>
+                            </div>
+                            <div class="model-result" id="result3"></div>
+                            <div class="scores-grid">
+                                <div class="score-item">
+                                    <span class="score-label">Spam</span>
+                                    <span class="score-value" id="spam3"></span>
+                                </div>
+                                <div class="score-item">
+                                    <span class="score-label">Ham</span>
+                                    <span class="score-value" id="ham3"></span>
+                                </div>
+                                <div class="score-item">
+                                    <span class="score-label">Confidence</span>
+                                    <span class="score-value" id="conf3"></span>
+                                </div>
+                            </div>
+                            <div class="model-tech">
+                                <strong>Techniques:</strong>
+                                <ul>
+                                    <li>TF-IDF Vectorization</li>
+                                    <li>Bigram Analysis</li>
+                                    <li>Ensemble Voting (RF+GB+SVM)</li>
+                                </ul>
+                            </div>
+                            <div class="tfidf-words" id="tfidf3" style="display: none;">
+                                <strong>Top TF-IDF Words:</strong>
+                                <div class="words-list" id="wordsList"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -85,40 +169,87 @@
 
             <!-- Evaluation Section -->
             <section class="card evaluation-section">
-                <h2>📊 Model Performance</h2>
+                <h2>📊 Model Performance Comparison</h2>
                 <div id="datasetInfo" class="dataset-info"></div>
                 
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <h3>Spam Detection</h3>
-                        <div id="spamMetrics" class="metrics"></div>
-                    </div>
-                    <div class="metric-card">
-                        <h3>Ham Detection</h3>
-                        <div id="hamMetrics" class="metrics"></div>
+                <!-- Model Tabs -->
+                <div class="model-tabs">
+                    <button class="tab-btn active" data-model="model1">Model 1: Naive Bayes</button>
+                    <button class="tab-btn" data-model="model2">Model 2: Enhanced</button>
+                    <button class="tab-btn" data-model="model3">Model 3: TF-IDF</button>
+                    <button class="tab-btn" data-model="comparison">📊 All Models</button>
+                </div>
+
+                <!-- Model 1 Performance -->
+                <div id="model1-performance" class="model-performance active">
+                    <h3 class="performance-title">Model 1: Naive Bayes Performance</h3>
+                    <div class="metrics-summary" id="metrics1"></div>
+                    <div class="charts-grid">
+                        <div class="chart-container">
+                            <h4>ROC Curve</h4>
+                            <canvas id="rocChart1"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h4>Confusion Matrix</h4>
+                            <canvas id="confusionChart1"></canvas>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Charts -->
-                <div class="charts-grid">
-                    <div class="chart-container">
-                        <h3>ROC Curve</h3>
-                        <canvas id="rocChart"></canvas>
-                    </div>
-                    <div class="chart-container">
-                        <h3>Confusion Matrix (Spam)</h3>
-                        <canvas id="confusionChart"></canvas>
+                <!-- Model 2 Performance -->
+                <div id="model2-performance" class="model-performance">
+                    <h3 class="performance-title">Model 2: Enhanced Features + SVM Performance</h3>
+                    <div class="metrics-summary" id="metrics2"></div>
+                    <div class="charts-grid">
+                        <div class="chart-container">
+                            <h4>ROC Curve</h4>
+                            <canvas id="rocChart2"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h4>Confusion Matrix</h4>
+                            <canvas id="confusionChart2"></canvas>
+                        </div>
                     </div>
                 </div>
 
-                <div class="charts-grid">
-                    <div class="chart-container">
-                        <h3>Performance Metrics Comparison</h3>
-                        <canvas id="metricsChart"></canvas>
+                <!-- Model 3 Performance -->
+                <div id="model3-performance" class="model-performance">
+                    <h3 class="performance-title">Model 3: TF-IDF + Ensemble Performance</h3>
+                    <div class="metrics-summary" id="metrics3"></div>
+                    <div class="charts-grid">
+                        <div class="chart-container">
+                            <h4>ROC Curve</h4>
+                            <canvas id="rocChart3"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h4>Confusion Matrix</h4>
+                            <canvas id="confusionChart3"></canvas>
+                        </div>
                     </div>
-                    <div class="chart-container">
-                        <h3>Dataset Distribution</h3>
-                        <canvas id="distributionChart"></canvas>
+                </div>
+
+                <!-- Comparison View -->
+                <div id="comparison-performance" class="model-performance">
+                    <h3 class="performance-title">All Models Comparison</h3>
+                    <div class="charts-grid">
+                        <div class="chart-container">
+                            <h4>ROC Curves Comparison</h4>
+                            <canvas id="rocComparison"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h4>Metrics Comparison</h4>
+                            <canvas id="metricsComparison"></canvas>
+                        </div>
+                    </div>
+                    <div class="charts-grid">
+                        <div class="chart-container">
+                            <h4>Accuracy by Model</h4>
+                            <canvas id="accuracyChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h4>Dataset Distribution</h4>
+                            <canvas id="distributionChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -126,7 +257,7 @@
 
         <!-- Footer -->
         <footer class="footer">
-            <p>Built with Naive Bayes Classification | Stop Word Filtering | Laplace Smoothing (δ=0.5)</p>
+            <p>Progressive ML Architecture: Model 1 (Naive Bayes) → Model 2 (+Features +SVM) → Model 3 (+TF-IDF +Ensemble)</p>
         </footer>
     </div>
 
