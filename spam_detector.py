@@ -12,6 +12,112 @@ spam_train_path = os.path.join(train_path, "spam")
 test_path = os.path.join(BASE_DIR, "test")
 
 
+# ================== SpamDetector Class for Per-Email Prediction ==================
+class SpamDetector:
+    """
+    Object-oriented interface for spam detection.
+    Train once, predict multiple times without retraining.
+    """
+    def __init__(self, delta=0.5):
+        """
+        Initialize the spam detector.
+        
+        Args:
+            delta: Laplace smoothing parameter (default: 0.5)
+        """
+        self.delta = delta
+        self.trained = False
+    
+    def train(self, ham_path=None, spam_path=None):
+        """
+        Train the spam detection model.
+        
+        Args:
+            ham_path: Path to ham emails directory (optional, uses default if None)
+            spam_path: Path to spam emails directory (optional, uses default if None)
+        """
+        # Use existing functions to build vocabulary and probabilities
+        all_trainWords, spam_trainWords, ham_trainWords = trainWord_generator()
+        self.all_uniqueWords = unique_words(all_trainWords)
+        self.spam_bagOfWords, self.ham_bagOfWords = bagOfWords_genarator(
+            self.all_uniqueWords, spam_trainWords, ham_trainWords
+        )
+        self.smoothed_spamBOW, self.smoothed_hamBOW = smoothed_bagOfWords(
+            self.all_uniqueWords, self.spam_bagOfWords, self.ham_bagOfWords, self.delta
+        )
+        
+        nb_of_allEmails = number_of_allEmails()
+        nb_of_spamEmails = number_of_spamEmails()
+        nb_of_hamEmails = number_of_hamEmails()
+        
+        self.spam_prob = spam_probability(nb_of_allEmails, nb_of_spamEmails)
+        self.ham_prob = ham_probability(nb_of_allEmails, nb_of_hamEmails)
+        
+        self.spam_condProb = spam_condProbability(
+            self.all_uniqueWords, self.spam_bagOfWords, self.smoothed_spamBOW, self.delta
+        )
+        self.ham_condProb = ham_condProbability(
+            self.all_uniqueWords, self.ham_bagOfWords, self.smoothed_hamBOW, self.delta
+        )
+        
+        self.trained = True
+    
+    def predict(self, email_text):
+        """
+        Predict whether an email is spam or ham.
+        
+        Args:
+            email_text: The email content as a string
+            
+        Returns:
+            "spam" or "ham"
+            
+        Raises:
+            Exception: If model hasn't been trained yet
+        """
+        if not self.trained:
+            raise Exception("Model not trained. Call train() first.")
+        
+        words = text_parser(email_text)
+        
+        # Calculate log-probabilities for spam and ham
+        spam_score = np.log(self.spam_prob)
+        ham_score = np.log(self.ham_prob)
+        
+        for word in words:
+            if word in self.all_uniqueWords:
+                spam_score += np.log(self.spam_condProb.get(word, 1e-10))
+                ham_score += np.log(self.ham_condProb.get(word, 1e-10))
+        
+        return "spam" if spam_score > ham_score else "ham"
+    
+    def predict_with_score(self, email_text):
+        """
+        Predict spam/ham with confidence scores.
+        
+        Args:
+            email_text: The email content as a string
+            
+        Returns:
+            tuple: (prediction, spam_score, ham_score)
+        """
+        if not self.trained:
+            raise Exception("Model not trained. Call train() first.")
+        
+        words = text_parser(email_text)
+        
+        spam_score = np.log(self.spam_prob)
+        ham_score = np.log(self.ham_prob)
+        
+        for word in words:
+            if word in self.all_uniqueWords:
+                spam_score += np.log(self.spam_condProb.get(word, 1e-10))
+                ham_score += np.log(self.ham_condProb.get(word, 1e-10))
+        
+        prediction = "spam" if spam_score > ham_score else "ham"
+        return prediction, spam_score, ham_score
+
+
 "*** Returns the number of all emails (train files) ***"
 
 
