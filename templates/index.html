@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spam Email Detector - Naive Bayes Classifier</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>📧 Spam Email Detector</h1>
+                <p class="subtitle">Powered by Naive Bayes Classification</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Detection Section -->
+            <section class="card detection-section">
+                <h2>🔍 Email Analysis</h2>
+                <div class="input-group">
+                    <label for="emailInput">Enter email content:</label>
+                    <textarea 
+                        id="emailInput" 
+                        placeholder="Subject: Special Offer!&#10;&#10;Congratulations! You've won a prize...&#10;&#10;Paste or type your email content here to check if it's spam."
+                        rows="8"
+                    ></textarea>
+                </div>
+                
+                <button id="detectBtn" class="btn btn-primary">
+                    <span class="btn-text">Detect Spam</span>
+                    <span class="btn-loader" style="display: none;">Analyzing...</span>
+                </button>
+
+                <!-- Results -->
+                <div id="results" class="results" style="display: none;">
+                    <div class="result-header">
+                        <div id="resultBadge" class="badge"></div>
+                        <h3 id="resultText"></h3>
+                    </div>
+                    
+                    <div class="scores-grid">
+                        <div class="score-card">
+                            <div class="score-label">Spam Score</div>
+                            <div id="spamScore" class="score-value"></div>
+                        </div>
+                        <div class="score-card">
+                            <div class="score-label">Ham Score</div>
+                            <div id="hamScore" class="score-value"></div>
+                        </div>
+                        <div class="score-card">
+                            <div class="score-label">Confidence</div>
+                            <div id="confidence" class="score-value"></div>
+                        </div>
+                    </div>
+
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Spam</span>
+                            <span>Ham</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div id="progressFill" class="progress-fill"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                <div id="error" class="error" style="display: none;"></div>
+
+                <!-- Sample Emails -->
+                <div class="samples">
+                    <p class="samples-title">Try these examples:</p>
+                    <div class="sample-buttons">
+                        <button class="btn-sample" data-type="spam">📩 Spam Example</button>
+                        <button class="btn-sample" data-type="ham">✉️ Ham Example</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Evaluation Section -->
+            <section class="card evaluation-section">
+                <h2>📊 Model Performance</h2>
+                <div id="datasetInfo" class="dataset-info"></div>
+                
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <h3>Spam Detection</h3>
+                        <div id="spamMetrics" class="metrics"></div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Ham Detection</h3>
+                        <div id="hamMetrics" class="metrics"></div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <h3>ROC Curve</h3>
+                        <canvas id="rocChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Confusion Matrix (Spam)</h3>
+                        <canvas id="confusionChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <h3>Performance Metrics Comparison</h3>
+                        <canvas id="metricsChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Dataset Distribution</h3>
+                        <canvas id="distributionChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Built with Naive Bayes Classification | Stop Word Filtering | Laplace Smoothing (δ=0.5)</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
