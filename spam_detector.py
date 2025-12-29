@@ -47,8 +47,23 @@ def number_of_hamEmails():
 
 
 def text_parser(text):
+    # Common English stop words to remove
+    stop_words = {'the', 'is', 'at', 'which', 'on', 'a', 'an', 'as', 'are', 'was', 'were',
+                  'been', 'be', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would',
+                  'should', 'could', 'may', 'might', 'must', 'can', 'of', 'to', 'in', 'for',
+                  'with', 'by', 'from', 'about', 'into', 'through', 'during', 'before',
+                  'after', 'above', 'below', 'between', 'under', 'again', 'further',
+                  'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all',
+                  'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no',
+                  'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 'but',
+                  'and', 'or', 'if', 'because', 'that', 'this', 'these', 'those', 'am',
+                  'i', 'you', 'he', 'she', 'it', 'we', 'they', 'them', 'their', 'what',
+                  'who', 'whom', 'my', 'your', 'his', 'her', 'its', 'our', 'your', 'their'}
+    
     words = re.split("[^a-zA-Z]", text)
-    lower_words = [word.lower() for word in words if len(word) > 0]
+    # Filter: lowercase, length >= 3, not a stop word
+    lower_words = [word.lower() for word in words 
+                   if len(word) >= 3 and word.lower() not in stop_words]
 
     return lower_words
 
@@ -256,37 +271,39 @@ def score_calculator(all_uniqueWords, spam_prob, ham_prob, spam_condProb, ham_co
     predicted_label_list = []
     decision_label_list = []
 
-        file_names = []
-        for directories, subdirectories, files in os.walk(test_path):
-            for filename in files:
-                file_names.append(os.path.join(directories, filename))
+    file_names = []
+    for directories, subdirectories, files in os.walk(test_path):
+        for filename in files:
+            file_names.append(os.path.join(directories, filename))
 
-        for full_path in file_names:
-            filename = os.path.basename(full_path)
-            actual_label = "ham" if "ham" in filename else "spam"
-            with open(full_path, encoding="latin-1") as target_file:
-                email_content = target_file.read()
-                email_words = text_parser(email_content)
+    for full_path in file_names:
+        filename = os.path.basename(full_path)
+        actual_label = "ham" if "ham" in filename else "spam"
+        with open(full_path, encoding="latin-1") as target_file:
+            email_content = target_file.read()
+            email_words = text_parser(email_content)
 
-                sigma_spamScore = 0
-                sigma_hamScore = 0
+            sigma_spamScore = 0
+            sigma_hamScore = 0
 
-                for word in email_words:
-                    if word in all_uniqueWords:
-                        sigma_spamScore += np.log(spam_condProb[word])
-                        sigma_hamScore += np.log(ham_condProb[word])
+            for word in email_words:
+                if word in all_uniqueWords:
+                    sigma_spamScore += np.log(spam_condProb[word])
+                    sigma_hamScore += np.log(ham_condProb[word])
 
-                spam_score = (np.log(spam_prob) + sigma_spamScore)
-                spam_score_list.append(spam_score)
+            spam_score = (np.log(spam_prob) + sigma_spamScore)
+            spam_score_list.append(spam_score)
 
-                ham_score = (np.log(ham_prob) + sigma_hamScore)
-                ham_score_list.append(ham_score)
+            ham_score = (np.log(ham_prob) + sigma_hamScore)
+            ham_score_list.append(ham_score)
 
-                predicted_label = "spam" if spam_score > ham_score else "ham"
-                predicted_label_list.append(predicted_label)
+            predicted_label = "spam" if spam_score > ham_score else "ham"
+            predicted_label_list.append(predicted_label)
 
-                decision_label = "right" if predicted_label == actual_label else "wrong"
-                decision_label_list.append(decision_label)
+            decision_label = "right" if predicted_label == actual_label else "wrong"
+            decision_label_list.append(decision_label)
+
+    return ham_score_list, spam_score_list, predicted_label_list, decision_label_list
 
 
 "*** Generates the content of result.txt ***"
@@ -311,53 +328,45 @@ def resultFileBuilder(result_output):
 
 
 def get_spamPrecision(fileNumbers, actualLabels, predictedLabels):
-    actual_label = ""
-    predicted_label = ""
-    decision_label = ""
+    tp = 0
+    fp = 0
+    precision = 0
 
-    ham_score_list = []
-    spam_score_list = []
+    for index in range(0, fileNumbers):
+        if(actualLabels[index] == "spam" and actualLabels[index] == predictedLabels[index]):
+            tp += 1
+        if(actualLabels[index] == "ham" and predictedLabels[index] == "spam"):
+            fp += 1
 
-    predicted_label_list = []
-    decision_label_list = []
+    precision = (tp / (tp + fp)) if (tp + fp) > 0 else 0
+
+    return precision
 
 
-    for directories, subdirectories, files in os.walk(test_path):
-        for filename in files:
-            actual_label = "ham" if "ham" in filename else "spam"
-            full_path = os.path.join(directories, filename)
-            with open(full_path, encoding="latin-1") as target_file:
-                email_content = target_file.read()
-                email_words = text_parser(email_content)
+"*** Calculates Recall (spam class) - Formula: (True Positive / (True Positive + False Negative)) ***"
 
-                sigma_spamScore = 0
-                sigma_hamScore = 0
 
-                for word in email_words:
-                    if word in all_uniqueWords:
-                        sigma_spamScore += np.log(spam_condProb[word])
-                        sigma_hamScore += np.log(ham_condProb[word])
+def get_spamRecall(fileNumbers, actualLabels, predictedLabels):
+    tp = 0
+    fn = 0
+    recall = 0
 
-                spam_score = (np.log(spam_prob) + sigma_spamScore)
-                spam_score_list.append(spam_score)
+    for index in range(0, fileNumbers):
+        if(actualLabels[index] == "spam" and actualLabels[index] == predictedLabels[index]):
+            tp += 1
+        if(actualLabels[index] == "spam" and predictedLabels[index] == "ham"):
+            fn += 1
 
-                ham_score = (np.log(ham_prob) + sigma_hamScore)
-                ham_score_list.append(ham_score)
+    recall = (tp / (tp + fn)) if (tp + fn) > 0 else 0
 
-                predicted_label = "spam" if spam_score > ham_score else "ham"
-                predicted_label_list.append(predicted_label)
+    return recall
 
-                decision_label = "right" if predicted_label == actual_label else "wrong"
-                decision_label_list.append(decision_label)
 
-            # Debug print for each test file
-            print(f"[DEBUG][score_calculator] File: {filename}, Actual: {actual_label}, Predicted: {predicted_label}")
+"*** Calculates Accuracy (spam class) - Formula: (TP + TN) / (TP + FP + TN + FN) ***"
 
-    print(f"[DEBUG][score_calculator] Total test files processed: {len(predicted_label_list)}")
-    print(f"[DEBUG][score_calculator] First 5 predicted labels: {predicted_label_list[:5]}")
-    print(f"[DEBUG][score_calculator] First 5 decision labels: {decision_label_list[:5]}")
 
-    return ham_score_list, spam_score_list, predicted_label_list, decision_label_list
+def get_spamAccuracy(fileNumbers, actualLabels, predictedLabels):
+    tp = 0
     fp = 0
     tn = 0
     fn = 0

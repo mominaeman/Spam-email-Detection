@@ -1,0 +1,5 @@
+Subject: Business Email Compromise Alert
+
+Your business email may have been compromised. Change passwords immediately.
+
+Our cybersecurity experts can help secure your systems.

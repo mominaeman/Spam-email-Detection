@@ -1,0 +1,5 @@
+Subject: Your PayPal Account Needs Verification
+
+We detected unusual activity on your PayPal account. Verify your identity now to prevent suspension.
+
+Failure to verify within 24 hours will result in account closure.

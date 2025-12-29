@@ -1,0 +1,3 @@
+Subject: Your Netflix Account SUSPENDED
+
+Multiple login attempts detected. Verify your account now or service will be permanently terminated.

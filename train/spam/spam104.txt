@@ -1,0 +1,5 @@
+Subject: Your Bank Account Security Alert
+
+Unusual login detected from a foreign IP address. Secure your account immediately.
+
+Click here to change your password and enable two-factor authentication.

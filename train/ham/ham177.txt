@@ -1,0 +1,3 @@
+Subject: Knowledge Management
+
+Knowledge management platform implemented.
